@@ -1,0 +1,159 @@
+{
+  "_comment": "SIMULATED / DUMMY DATA — not EmpowHER-303 results. All values are illustrative and were generated to demonstrate an interactive survival-extrapolation report. See README. This file holds the *parameters* of the model (medians, tail targets, anchors, diagnostics); the survival curves themselves are computed at runtime in app.js from these parameters so the dashboard stays small and data-driven.",
+
+  "horizonMonths": 60,
+
+  "endpoints": {
+    "OS": {
+      "label": "Overall survival (OS)",
+      "short": "OS",
+      "cut": 22,
+      "shape": 1.30,
+      "note": "Most immature endpoint — KM ends earliest, so the tail is the most model-dependent.",
+      "subgroups": {
+        "ITT": {
+          "label": "ITT",
+          "arms": {
+            "Zanidatamab": { "median": 17.6, "base5": 0.058 },
+            "Trastuzumab": { "median": 14.1, "base5": 0.036 }
+          },
+          "anchor": { "1": 0.55, "2": 0.28, "3": 0.14, "5": 0.04 }
+        },
+        "3L": {
+          "label": "3L (third line)",
+          "arms": {
+            "Zanidatamab": { "median": 18.4, "base5": 0.070 },
+            "Trastuzumab": { "median": 15.0, "base5": 0.044 }
+          },
+          "anchor": { "1": 0.58, "2": 0.31, "3": 0.16, "5": 0.05 }
+        },
+        "4L": {
+          "label": "4L (fourth line +)",
+          "arms": {
+            "Zanidatamab": { "median": 14.6, "base5": 0.041 },
+            "Trastuzumab": { "median": 11.9, "base5": 0.025 }
+          },
+          "anchor": { "1": 0.49, "2": 0.22, "3": 0.10, "5": 0.03 }
+        }
+      }
+    },
+
+    "PFS": {
+      "label": "Progression-free survival (PFS)",
+      "short": "PFS",
+      "cut": 30,
+      "shape": 1.12,
+      "note": "Most mature endpoint — KM extends furthest, so extrapolation risk is lowest.",
+      "subgroups": {
+        "ITT": {
+          "label": "ITT",
+          "arms": {
+            "Zanidatamab": { "median": 7.4, "base5": 0.030 },
+            "Trastuzumab": { "median": 5.1, "base5": 0.018 }
+          },
+          "anchor": { "1": 0.31, "2": 0.12, "3": 0.06, "5": 0.02 }
+        },
+        "3L": {
+          "label": "3L (third line)",
+          "arms": {
+            "Zanidatamab": { "median": 8.1, "base5": 0.036 },
+            "Trastuzumab": { "median": 5.7, "base5": 0.022 }
+          },
+          "anchor": { "1": 0.35, "2": 0.14, "3": 0.07, "5": 0.02 }
+        },
+        "4L": {
+          "label": "4L (fourth line +)",
+          "arms": {
+            "Zanidatamab": { "median": 5.9, "base5": 0.022 },
+            "Trastuzumab": { "median": 4.1, "base5": 0.013 }
+          },
+          "anchor": { "1": 0.26, "2": 0.09, "3": 0.04, "5": 0.01 }
+        }
+      }
+    },
+
+    "ToT": {
+      "label": "Time on treatment (ToT)",
+      "short": "ToT",
+      "cut": 20,
+      "shape": 1.05,
+      "note": "Treatment-discontinuation endpoint — used to inform drug-cost duration in the economic model.",
+      "subgroups": {
+        "ITT": {
+          "label": "ITT",
+          "arms": {
+            "Zanidatamab": { "median": 6.6, "base5": 0.020 },
+            "Trastuzumab": { "median": 4.8, "base5": 0.012 }
+          },
+          "anchor": { "1": 0.28, "2": 0.10, "3": 0.05, "5": 0.01 }
+        },
+        "3L": {
+          "label": "3L (third line)",
+          "arms": {
+            "Zanidatamab": { "median": 7.1, "base5": 0.024 },
+            "Trastuzumab": { "median": 5.3, "base5": 0.015 }
+          },
+          "anchor": { "1": 0.31, "2": 0.11, "3": 0.05, "5": 0.01 }
+        },
+        "4L": {
+          "label": "4L (fourth line +)",
+          "arms": {
+            "Zanidatamab": { "median": 5.5, "base5": 0.015 },
+            "Trastuzumab": { "median": 4.0, "base5": 0.009 }
+          },
+          "anchor": { "1": 0.24, "2": 0.08, "3": 0.04, "5": 0.01 }
+        }
+      }
+    }
+  },
+
+  "distributions": {
+    "Exponential":                 { "tailFactor": 0.82, "curv": 1.00, "aic": 4182.6, "bic": 4187.1 },
+    "Weibull":                     { "tailFactor": 1.00, "curv": 0.84, "aic": 4166.9, "bic": 4175.8 },
+    "Gompertz":                    { "tailFactor": 1.78, "curv": 1.60, "aic": 4170.4, "bic": 4179.3 },
+    "Log-normal":                  { "tailFactor": 1.40, "curv": 0.66, "aic": 4164.2, "bic": 4173.1 },
+    "Log-logistic":                { "tailFactor": 1.30, "curv": 0.60, "aic": 4165.7, "bic": 4174.6 },
+    "Generalised gamma":           { "tailFactor": 0.52, "curv": 0.94, "aic": 4162.8, "bic": 4176.1 },
+    "Royston-Parmar spline (2-knot)": { "tailFactor": 1.12, "curv": 1.14, "aic": 4163.5, "bic": 4181.3 }
+  },
+
+  "waning": {
+    "None": {
+      "label": "None",
+      "converge": 0.0,
+      "note": "full treatment effect maintained across the extrapolation"
+    },
+    "Hazard convergence": {
+      "label": "Hazard convergence",
+      "converge": 0.55,
+      "note": "arm hazards converge gradually after the data cut"
+    },
+    "No benefit after progression": {
+      "label": "No benefit after progression",
+      "converge": 0.85,
+      "note": "treatment effect is removed in the tail; arms merge"
+    }
+  },
+
+  "fitTypes": {
+    "Jointly fitted (treatment as covariate)": {
+      "label": "Jointly fitted (treatment as covariate)",
+      "short": "Joint",
+      "expTailMult": 0.80,
+      "note": "treatment entered as a single covariate; the experimental curve is a constrained (proportional) transform of the control curve, so the arms stay closer in the tail"
+    },
+    "Fully stratified (separate per arm)": {
+      "label": "Fully stratified (separate per arm)",
+      "short": "Stratified",
+      "expTailMult": 1.14,
+      "note": "each arm fitted independently; the experimental tail is free to diverge from the control, giving a wider long-term separation"
+    }
+  },
+
+  "genPopFloor": {
+    "_comment": "General-population mortality floor — very slow decline. The extrapolated tail must not cross below this in a plausible model.",
+    "annualHazard": 0.028
+  },
+
+  "phFadeMonth": 16
+}

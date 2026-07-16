@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmpowHER-303 · Survival Extrapolation (Simulated demonstrator)</title>
+  <meta name="description" content="Interactive survival-extrapolation demonstrator — simulated data — Pharmacoevidence." />
+  <link rel="icon" href="assets/logo.svg" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+  <!-- ===================================================================
+       Passphrase gate (client-side obfuscation only — see README)
+       =================================================================== -->
+  <div id="gate">
+    <div class="gate-card">
+      <img src="assets/logo.svg" alt="Pharmacoevidence" class="gate-logo" />
+      <h1>EmpowHER-303 · Survival Report</h1>
+      <p class="gate-sub">Pharmacoevidence · restricted demonstrator</p>
+      <label for="gate-input">Passphrase</label>
+      <div class="gate-row">
+        <input id="gate-input" type="password" autocomplete="off"
+               placeholder="Enter passphrase" aria-label="Passphrase" />
+        <button id="gate-btn" type="button">Enter</button>
+      </div>
+      <p id="gate-error">Incorrect passphrase. Please try again.</p>
+      <p class="gate-note">
+        This gate is client-side obfuscation, <b>not</b> real access control.
+        A public static site cannot enforce server-side authentication. For genuine
+        restriction, place the site behind Cloudflare Access (see README).
+      </p>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       Dashboard (revealed after gate)
+       =================================================================== -->
+  <div id="app" class="hidden" aria-hidden="true">
+
+    <!-- Non-dismissible diagonal watermark overlay -->
+    <div id="watermark" aria-hidden="true">
+      <div>SIMULATED DATA</div><div>DEMONSTRATOR</div><div>SIMULATED DATA</div>
+      <div>DEMONSTRATOR</div><div>SIMULATED DATA</div><div>DEMONSTRATOR</div>
+      <div>SIMULATED DATA</div><div>DEMONSTRATOR</div><div>SIMULATED DATA</div>
+    </div>
+
+    <div class="wrap">
+
+      <!-- Decorative browser frame -->
+      <div class="browser-frame">
+        <div class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        <div class="address-pill">
+          <span class="lock">&#128274;</span>
+          <span><b>pharmacoevidence.io</b> / empowher-303 / survival-report</span>
+        </div>
+      </div>
+
+      <!-- App title bar with filter pills -->
+      <div class="titlebar">
+        <div class="brand">
+          <img src="assets/logo.svg" alt="PCE" class="brand-logo" />
+          <div class="titles">
+            <div class="t-main">EmpowHER-303 · Survival Extrapolation</div>
+            <div class="t-sub">Interactive report</div>
+          </div>
+        </div>
+        <div class="filters">
+          <div class="pill endpoint">
+            <label for="f-endpoint">Endpoint</label>
+            <select id="f-endpoint"></select>
+          </div>
+          <div class="pill distribution">
+            <label for="f-distribution">Distribution</label>
+            <select id="f-distribution"></select>
+          </div>
+          <div class="pill subgroup">
+            <label for="f-subgroup">Subgroup</label>
+            <select id="f-subgroup"></select>
+          </div>
+          <div class="pill waning">
+            <label for="f-waning">Waning</label>
+            <select id="f-waning"></select>
+          </div>
+          <div class="pill fittype">
+            <label for="f-fittype">Fit type</label>
+            <select id="f-fittype"></select>
+          </div>
+          <button id="method-btn" class="method-btn" type="button" title="NICE DSU TSD 14 selection algorithm">&#9432; Method</button>
+          <button id="reset-btn" class="reset-btn" type="button">Reset</button>
+        </div>
+      </div>
+
+      <!-- Persistent watermark banner -->
+      <div class="watermark-bar">
+        <span>&#9888; Illustrative demonstrator — simulated data — not EmpowHER-303 results</span>
+      </div>
+
+      <!-- Panel grid -->
+      <div class="grid">
+
+        <!-- Panel A — Survival curve (hero) -->
+        <section class="panel a">
+          <div class="accent"></div>
+          <div class="panel-head">
+            <div class="p-tag">Panel A</div>
+            <h2 id="a-title">Survival curve</h2>
+            <p class="p-desc">KM (solid) to data cut, selected extrapolation (dashed) to 60 months, general-population floor (dotted).</p>
+          </div>
+          <div class="panel-body">
+            <div class="chart-holder"><canvas id="chart-survival"></canvas></div>
+            <div class="legend-row">
+              <span class="lg"><span class="swatch solid" style="border-color:var(--teal)"></span>Zanidatamab (KM)</span>
+              <span class="lg"><span class="swatch dash"  style="border-color:var(--teal)"></span>Zanidatamab (extrap.)</span>
+              <span class="lg"><span class="swatch solid" style="border-color:var(--red)"></span>Trastuzumab (KM)</span>
+              <span class="lg"><span class="swatch dash"  style="border-color:var(--red)"></span>Trastuzumab (extrap.)</span>
+              <span class="lg"><span class="swatch dot"   style="border-color:var(--muted)"></span>Gen-pop floor</span>
+              <span class="lg"><span class="swatch dash"  style="border-color:var(--border)"></span>Other distributions (fan)</span>
+            </div>
+            <div class="a-stats">
+              <div class="a-stat"><div class="k">Median · Zani</div><div class="v" id="a-med-z">–</div><div class="u">months</div></div>
+              <div class="a-stat"><div class="k">Median · Tras</div><div class="v" id="a-med-t">–</div><div class="u">months</div></div>
+              <div class="a-stat"><div class="k">5y survival · Zani</div><div class="v" id="a-5y-z">–</div><div class="u">modelled</div></div>
+              <div class="a-stat"><div class="k">Data cut</div><div class="v" id="a-cut">–</div><div class="u">months</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel B — Landmark validation -->
+        <section class="panel b">
+          <div class="accent"></div>
+          <div class="panel-head">
+            <div class="p-tag">Panel B</div>
+            <h2>Landmark validation</h2>
+            <p class="p-desc">Modelled (Zanidatamab) vs external RWE anchor at 1 / 2 / 3 / 5 years.</p>
+          </div>
+          <div class="panel-body">
+            <div class="chart-holder"><canvas id="chart-landmark"></canvas></div>
+          </div>
+        </section>
+
+        <!-- Panel E — Dynamic interpretation -->
+        <section class="panel e">
+          <div class="accent"></div>
+          <div class="panel-head">
+            <div class="p-tag">Panel E</div>
+            <h2>Dynamic interpretation</h2>
+            <p class="p-desc">Regenerated from the current selection.</p>
+          </div>
+          <div class="panel-body">
+            <div class="interpretation" id="interpretation"><!-- filled by JS --></div>
+          </div>
+        </section>
+
+        <!-- Panel C — Log-cumulative hazard (PH check) -->
+        <section class="panel c">
+          <div class="accent"></div>
+          <div class="panel-head">
+            <div class="p-tag">Panel C</div>
+            <h2>Log-cumulative hazard <span id="ph-badge" class="ph-badge">–</span></h2>
+            <p class="p-desc">ln(&minus;ln S) vs ln(time). Non-parallel lines signal a proportional-hazards violation.</p>
+          </div>
+          <div class="panel-body">
+            <div class="chart-holder"><canvas id="chart-ph"></canvas></div>
+          </div>
+        </section>
+
+        <!-- Panel D — PH / AFT diagnostics (tabbed, per NICE DSU TSD 14) -->
+        <section class="panel d">
+          <div class="accent"></div>
+          <div class="panel-head">
+            <div class="p-tag">Panel D</div>
+            <h2>PH / AFT diagnostics</h2>
+            <p class="p-desc">Three model-checking views (NICE DSU TSD 14). Switch between them below.</p>
+            <div class="tabs" role="tablist" aria-label="Diagnostic views">
+              <button class="tab active" data-tab="schoen" role="tab" aria-selected="true">Schoenfeld residuals</button>
+              <button class="tab" data-tab="lch" role="tab" aria-selected="false">Log-cumulative hazard</button>
+              <button class="tab" data-tab="qq" role="tab" aria-selected="false">QQ plot (AFT)</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="tab-stack">
+              <div class="tab-panel" data-tabpanel="schoen">
+                <div class="chart-holder"><canvas id="chart-schoenfeld"></canvas></div>
+              </div>
+              <div class="tab-panel hidden" data-tabpanel="lch">
+                <div class="chart-holder"><canvas id="chart-lch2"></canvas></div>
+              </div>
+              <div class="tab-panel hidden" data-tabpanel="qq">
+                <div class="chart-holder"><canvas id="chart-qq"></canvas></div>
+              </div>
+            </div>
+            <p class="tab-note" id="d-note"><!-- filled by JS --></p>
+          </div>
+        </section>
+
+        <!-- Panel F — Observed vs predicted (goodness of fit) + milestones -->
+        <section class="panel f">
+          <div class="accent"></div>
+          <div class="panel-head">
+            <div class="p-tag">Panel F</div>
+            <h2>Observed vs predicted <span class="gof-badge" id="gof-badge">–</span></h2>
+            <p class="p-desc">Fitted parametric curve overlaid on the observed KM, with modelled survival milestones.</p>
+          </div>
+          <div class="panel-body f-body">
+            <div class="f-chart">
+              <div class="chart-holder"><canvas id="chart-gof"></canvas></div>
+            </div>
+            <div class="f-table">
+              <table class="milestones" id="milestones">
+                <caption>Modelled survival milestones (simulated)</caption>
+                <thead>
+                  <tr><th>Milestone</th><th>Zanidatamab</th><th>Trastuzumab</th></tr>
+                </thead>
+                <tbody><!-- filled by JS --></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div>Illustrative demonstrator · simulated data · not EmpowHER-303 results · Pharmacoevidence</div>
+        <div class="auth-note">Access gate is client-side obfuscation only — see README for robust options (Cloudflare Access).</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       Method modal — NICE DSU TSD 14 model-selection flowchart (static)
+       =================================================================== -->
+  <div id="method-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="method-title">
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h2 id="method-title">Survival model-selection algorithm</h2>
+          <p class="modal-sub">Adapted from NICE DSU TSD 14 (Latimer 2011) · illustrative</p>
+        </div>
+        <button class="modal-close" id="method-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="flow">
+          <!-- Step 1 -->
+          <div class="flow-step">
+            <div class="flow-box start">1 · Initial plot assessment<br><span>log-cumulative hazard &amp; log-time plots per arm</span></div>
+          </div>
+          <div class="flow-arrow">▼ assess shape &amp; parallelism</div>
+
+          <!-- Three branches -->
+          <div class="flow-branches">
+            <div class="flow-branch">
+              <div class="flow-cond">Plots not straight</div>
+              <div class="flow-box">Flexible / piecewise models<br><span>splines, generalised gamma, piecewise</span></div>
+            </div>
+            <div class="flow-branch">
+              <div class="flow-cond">Plots not parallel</div>
+              <div class="flow-box">Individual per-arm fits<br><span>fit each arm separately (stratified)</span></div>
+            </div>
+            <div class="flow-branch">
+              <div class="flow-cond">Plots parallel</div>
+              <div class="flow-box">PH / AFT models<br><span>treatment as covariate (jointly fitted)</span></div>
+            </div>
+          </div>
+          <div class="flow-arrow">▼ compare candidate fits</div>
+
+          <!-- Step 3 — completeness fork -->
+          <div class="flow-branches two">
+            <div class="flow-branch">
+              <div class="flow-cond good">Data reasonably complete</div>
+              <div class="flow-box">Judge on:<br><span>AIC / BIC · internal validity · visual fit</span></div>
+            </div>
+            <div class="flow-branch">
+              <div class="flow-cond warn">Data immature / incomplete</div>
+              <div class="flow-box">Judge on the above <b>plus</b>:<br><span>external RWE data · clinical plausibility · duration of treatment effect</span></div>
+            </div>
+          </div>
+          <div class="flow-arrow">▼</div>
+
+          <!-- Step 4 -->
+          <div class="flow-step">
+            <div class="flow-box end">4 · Choose model + run sensitivity analysis<br><span>base case + scenario/waning analyses across plausible curves</span></div>
+          </div>
+        </div>
+        <p class="flow-caption">
+          This demonstrator sits in the <b>immature-data</b> branch: many curves fit the observed KM closely
+          (see the fan in Panel A) yet diverge in the tail, so selection is driven by external validation and
+          clinical plausibility — <b>not</b> by AIC/BIC alone.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js v4 via jsDelivr CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- App logic (ES module) -->
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>
